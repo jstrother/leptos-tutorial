@@ -17,16 +17,20 @@ fn App() -> impl IntoView {
         </button>
         <br />
         <ProgressBar progress = count />
-        <ProgressBar progress = double_count />
+        <ProgressBar progress = Signal::derive(double_count) />
     }
 }
 
+/// Shows progress towards a goal.
 #[component]
 #[allow(non_snake_case)]
 fn ProgressBar(
+    /// The maximum value of the progress bar.
     #[prop(default = 100)]
     max: u16,
-    progress: impl Fn() -> i32 + 'static,
+    /// The current progress towards the goal.
+    #[prop(into)]
+    progress: Signal<i32>,
 ) -> impl IntoView {
     view! {
         <progress
