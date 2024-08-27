@@ -10,6 +10,22 @@ fn main() {
 fn App() -> impl IntoView {
     let (count, set_count) = create_signal(0);
     let double_count = move || count() * 2;
+    let values = vec![0,1,2];
+    let length = 5;
+    let counters = (1..=length).map(|idx| create_signal(idx));
+    let counter_buttons = counters
+        .map(|(count, set_count)| {
+            view! {
+                <li>
+                    <button
+                        on:click = move |_| { set_count.update(|n| *n += 1); }
+                    >
+                        { count }
+                    </button>
+                </li>
+            }
+        })
+        .collect_view();
 
     view! {
         <button on:click = move |_| { set_count.update(|n| *n += 1); }>
@@ -18,6 +34,18 @@ fn App() -> impl IntoView {
         <br />
         <ProgressBar progress = count />
         <ProgressBar progress = Signal::derive(double_count) />
+        <br />
+        <ul>
+            { values.into_iter()
+                .map(|v| view! { <li>{v}</li> })
+                // .collect::<Vec<_>>() // both "collect" and "collect_view" work and are equivalent
+                .collect_view()
+            }
+        </ul>
+        <br />
+        <ul>
+            { counter_buttons }
+        </ul>
     }
 }
 
